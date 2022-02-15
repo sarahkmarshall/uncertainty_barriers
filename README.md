@@ -39,7 +39,7 @@ In this folder, it will contain all of the input and output files from the model
 
 ## Model functions
 
-Some functions were developed for the scripts to run. These are saved here as "functions_ub". This may be referred to as paper_3_functions in the code, I will work to improve this. These functions are not perfectly parsimoneous, the method for generating random features could be improved.
+Some functions were developed for the scripts to run. These are saved here as "functions_ub". This may be referred to as paper_3_functions in the code, I will work to improve this. These functions are not perfectly parsimonious, the method for generating random features could be improved.
 
 ## Setting up the case studies
 
