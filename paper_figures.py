@@ -49,7 +49,7 @@ MT3D_USGS_folder      = r'C:\workspace\modflow_dbl\mt3dusgsdbl.exe' # Double pre
 exe_name = r'C:\workspace\Proj2_TracersBarriers\MT3D_Reaction_sngl' 
 mt3d_version = 'mt3d-usgs' 
 
-pprfigureDirectory = r"C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev2"
+pprfigureDirectory = r"C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev"
 
 all_well_dens_key_dfs       = []
 all_well_dens_ph_dfs        = []
@@ -65,9 +65,9 @@ all_well_dens_filt_stats    = []
 
 all_well_dens_mdl_rmse_f_uf = []
 
-overall_names_list = ["UB_53"]
-well_densities = [500]
-config_list = ["b"]
+overall_names_list = ["UB_29", "UB_37", "UB_36", "UB_33", "UB_38", "UB_39", "UB_40"]
+well_densities = [500, 250, 100, 50, 25, 10, 5]
+config_list = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
 
 
 # Model set up ===============================================================
@@ -92,10 +92,10 @@ length_simulation = 1
 real_fault_K = hk_aquifer/1000
 
 # Download data ===============================================================
-overallName = "UB_53"
+
 for overallName in overall_names_list:
     
-    n_runs = 2
+    n_runs = 18
     
     modelNames_list = []
     
@@ -134,7 +134,7 @@ for overallName in overall_names_list:
     length_real_barrier = 5515 #m
        
     #=====ANALYSIS OF MODEL OUTPUTS================================================
-    mdl = 1
+    mdl = 0
     for mdl in range(1, len(modelNames_list), 2): # Every second (regularised only)
         modelname = modelNames_list[mdl]
         print("Model name: %s" % modelname)
@@ -189,7 +189,6 @@ for overallName in overall_names_list:
         rmse_h_all_mdls.append(rmse_h_cum_inv)
         
         # Age
-        '''
         with open (os.path.join(dataDirectory, 'rmse_a_cum_inv'), 'rb') as fp:
             rmse_a_cum_inv = pickle.load(fp)
         with open (os.path.join(dataDirectory, 'rmse_a_cum_K_p'), 'rb') as fp:
@@ -210,18 +209,17 @@ for overallName in overall_names_list:
         rmse_c_all_f_all.append(rmse_c_all_f) 
         
         rmse_c_all_mdls.append(rmse_c_cum_inv)
-        '''
+        
         # Download RMSE data - for all model cells
         
         # filtered and unfiltered
-        '''
         with open (os.path.join(dataDirectory, 'rmse_f_uf_whole_mdl'), 'rb') as fp:
             rmse_f_uf_whole_mdl = pickle.load(fp)
             
         rmse_whole_mdl_all.append(rmse_f_uf_whole_mdl)
-        '''
+        
     #=====RMSE CUT OFF=============================================================
-        '''
+        
         rmse_to_use = rmse_c_cum_inv # rmse_c_cum_inv
         
         drop_between = []
@@ -229,7 +227,7 @@ for overallName in overall_names_list:
             print(i)
             if i != len(rmse_to_use)-1:
                 drop_between.append((rmse_to_use[i] - rmse_to_use[i+1])*100/rmse_to_use[i])
-            '''
+            
     #=====OVERALL METRIC TO COMPARE MODEL RESULTS==================================
     
         w_dist = .001 # Weight for distance
@@ -255,12 +253,11 @@ for overallName in overall_names_list:
             
     # -------------------------------------------------------------------------
         # Download summary table of the difference between filtered arrays
-        '''
         filtered_stats_df_f = os.path.join(dataDirectory, "filtered_arrays_stats.csv") # or key_df for all faults, key is just those identified >0.8 and low K
         filtered_stats_df = pd.read_csv(filtered_stats_df_f)
     
         filt_stats_df_all.append(filtered_stats_df)
-          '''  
+            
             
         # END OF FIRST LOOP
         
@@ -268,15 +265,15 @@ for overallName in overall_names_list:
     all_well_dens_ph_dfs.append(all_phantom_dfs)
     
     all_well_dens_rmse_h.append(rmse_h_all_mdls)
-    # all_well_dens_rmse_a.append(rmse_a_all_mdls)
-    # all_well_dens_rmse_c.append(rmse_c_all_mdls)
+    all_well_dens_rmse_a.append(rmse_a_all_mdls)
+    all_well_dens_rmse_c.append(rmse_c_all_mdls)
     
-    # all_well_dens_mmetric.append(metric_mean_list)
-    # all_well_dens_metric.append(metric_list)
+    all_well_dens_mmetric.append(metric_mean_list)
+    all_well_dens_metric.append(metric_list)
     
-    # all_well_dens_filt_stats.append(filt_stats_df_all)
+    all_well_dens_filt_stats.append(filt_stats_df_all)
     
-    # all_well_dens_mdl_rmse_f_uf.append(rmse_whole_mdl_all)
+    all_well_dens_mdl_rmse_f_uf.append(rmse_whole_mdl_all)
     
     # END OF SECOND LOOP 
     
@@ -324,14 +321,13 @@ c_list = [ph_1_c, ph_1_c, ph_2_c, ph_2_c, ph_3_c, ph_3_c,
           ph_1_c, ph_1_c, ph_2_c, ph_2_c, ph_3_c, ph_3_c]
 
 c_list_reg = c_list[::2]
-real_plot_c = "k"
-real_plot_ls = (0, (1,.6)) #":"
 
 #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 #------------------------------------------------------------------------------    
 # PLOTTING
 # -----------------------------------------------------------------------------
 #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+
 ###############################################################################
 ###############################################################################
 # FIGURE ONE: LOCATION OF PHANTOM FAULTS
@@ -595,7 +591,7 @@ plt.xlabel("$x axis$")
 plt.savefig(os.path.join(pprfigureDirectory, "all_ph_fts_model.pdf"), dpi=dpi_value, format=plt_format)
 plt.savefig(os.path.join(pprfigureDirectory, "all_ph_fts_model"), dpi=dpi_value)
 
-
+      
 # -----------------------------------------------------------------------------
 ###############################################################################
 ###############################################################################
@@ -666,7 +662,7 @@ l_list = []
 n_list = []
 p_list = []
 r_list = []
-''' Remove not relevant this example
+
 for welldensoptn in comp_dict_K_key:
     print(welldensoptn)
     for k, v in comp_dict_K_key[welldensoptn].iterrows():
@@ -773,20 +769,19 @@ plot_phantom_faults_ident(f_idx_3, ph_fa_cols_list3, ph_fa_rows_list3,
 
 plt.savefig(os.path.join(pprfigureDirectory, "ident_ph_fts.pdf"), dpi=dpi_value, format=plt_format)        
 plt.savefig(os.path.join(pprfigureDirectory, "ident_ph_fts"), dpi=dpi_value)        
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE THREE: LOCATION OF KEY PHANTOM FAULTS - WITH FREQUENCY
 ###############################################################################
 ###############################################################################
-'''
+
 # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
 # Now I want to show some sort of colour-scale, how many times did each fault appear?
       
 # Let's see how many duplicates of each there are in the lists for each phantom fault
 def getDuplicatesWithCount(listOfElems):
-   #Get frequency count of duplicate elements in the given list 
-    
+    ''' Get frequency count of duplicate elements in the given list '''
     dictOfElems = dict()
     # Iterate over each element in list
     for elem in listOfElems:
@@ -857,8 +852,8 @@ plot_phantom_faults_ident_col(dictOfPhNumbers_3, ph_fa_cols_list3, ph_fa_rows_li
 
 plt.savefig(os.path.join(pprfigureDirectory, "ident_ph_fts_freq.pdf"), dpi=dpi_value, format=plt_format)        
 plt.savefig(os.path.join(pprfigureDirectory, "ident_ph_fts_freq"), dpi=dpi_value)        
-'''
-############'###################################################################
+
+###############################################################################
 ###############################################################################
 # FIGURE FOUR: PLOTTING RMSE FOR ALL SIMULATIONS
 ###############################################################################
@@ -908,7 +903,7 @@ plt.savefig(os.path.join(pprfigureDirectory, "RMSE_all_no100"), dpi=dpi_value)
 # FIGURE FIVE: PLOTTING RMSE AVERAGED OUT - average obs wells & ph faults 
 ###############################################################################
 ###############################################################################
-'''
+
 well_dens_mean_rmse_lists = []
 well_dens_all_rmse_lists = []
 
@@ -917,13 +912,25 @@ for welldensoptn in range(len(all_well_dens_rmse_c)):
     
     rmse1 = all_well_dens_rmse_c[welldensoptn][0][:-1]
     rmse2 = all_well_dens_rmse_c[welldensoptn][1][:-1]
-
+    rmse3 = all_well_dens_rmse_c[welldensoptn][2][:-1]
+    rmse4 = all_well_dens_rmse_c[welldensoptn][3][:-1]
+    rmse5 = all_well_dens_rmse_c[welldensoptn][4][:-1]
+    rmse6 = all_well_dens_rmse_c[welldensoptn][5][:-1]
+    rmse7 = all_well_dens_rmse_c[welldensoptn][6][:-1]
+    rmse8 = all_well_dens_rmse_c[welldensoptn][7][:-1]
+    rmse9 = all_well_dens_rmse_c[welldensoptn][8][:-1]
     
     # The longest is 10 faults, so I want to add in N/A values so I can calculate means
     # when they are all the same length
     rmse1l = []
     rmse2l = []
-
+    rmse3l = []
+    rmse4l = []
+    rmse5l = []
+    rmse6l = []
+    rmse7l = []
+    rmse8l = []
+    rmse9l = []
     for i in range(10):
         print("i = %d" %i)
         if len(rmse1) > i:
@@ -1025,13 +1032,13 @@ plt.tight_layout()
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_all_mean.pdf"), dpi=dpi_value, format=plt_format)        
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_all_mean"), dpi=dpi_value)        
 
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE FIVE: PLOTTING RMSE AVERAGED OUT - average obs wells 
 ###############################################################################
 ###############################################################################
-'''
+
 captions = ["(a) 500 wells", "(b) 250 wells", "(c) 100 wells", "(d) 50 wells",
             "(e) 25 wells", "(f) 10 wells", "(g) 5 wells"]
 
@@ -1085,7 +1092,7 @@ plt.legend()
 plt.xlabel("Number of phantom structures")
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_obs_mean.pdf"), dpi=dpi_value, format=plt_format)        
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_obs_mean"), dpi=dpi_value)        
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE SIX: PLOTTING K AVERAGED OUT 
@@ -1093,7 +1100,7 @@ plt.savefig(os.path.join(pprfigureDirectory, "RMSE_obs_mean"), dpi=dpi_value)
 ###############################################################################
 
 # Plotting the mean K value of all results
-'''
+
 list_of_K_dicts_1 = [] # One for each well dens optn
 list_of_K_dicts_2 = [] # One for each well dens optn
 list_of_K_dicts_3 = [] # One for each well dens optn
@@ -1221,7 +1228,8 @@ lwr = np.log10(3e-9)
 upr = np.log10(1)
 rangecol = upr - lwr
 colour = cm.terrain(np.linspace(0, 1, int(rangecol+1)*100)) # coolwarm_r
-
+real_plot_c = "k"
+real_plot_ls = (0, (1,.6)) #":"
 xcaptn = 10*100
 ycaptn = 80*100
 ax_positions = []
@@ -1437,13 +1445,13 @@ cb.set_label("log $K_b$ [m/d]", labelpad=-30, x=1.15, y=0.6, fontsize=14)
 
 plt.savefig(os.path.join(pprfigureDirectory, "AllKVals.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "AllKVals"), dpi=dpi_value)  
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE SEVEN: PLOTTING FREQUENCY OF FAULT 
 ###############################################################################
 ###############################################################################      
-'''
+
 list_of_freq_dicts_1 = [] # One for each well dens optn
 list_of_freq_dicts_2 = [] # One for each well dens optn
 list_of_freq_dicts_3 = [] # One for each well dens optn
@@ -1725,7 +1733,7 @@ cb.set_label("Frequency", labelpad=-30, x=1.2, y=0.5, fontsize=14)
 
 plt.savefig(os.path.join(pprfigureDirectory, "FreqStructure.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "FreqStructure"), dpi=dpi_value)  
-'''
+
 
 ###############################################################################
 ###############################################################################
@@ -1733,9 +1741,9 @@ plt.savefig(os.path.join(pprfigureDirectory, "FreqStructure"), dpi=dpi_value)
 ###############################################################################
 ###############################################################################
 
-sngle_example_fldr = r'C:\workspace\Proj3_PilbaraBarriers\UB_52_b'
-modelname = "UB_52_b"
-modelname_mt = "UB_52_b_MT3D"
+sngle_example_fldr = r'C:\workspace\Proj3_PilbaraBarriers\UB_29_b'
+modelname = "UB_29_b"
+modelname_mt = "UB_29_b_MT3D"
 
 # CREATE HEADFILE OBJECTS  
 
@@ -1886,7 +1894,6 @@ key_df_single.index = key_df_single.param_name
 # Plot the hydraulic conductivity values of identifiable faults.
  
 min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-min_value = -3.0 # Hack this because I want the legend the same as other plots
 max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
 range_values = max_value*100-min_value*100 #max_value-min_value 
 ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
@@ -1944,12 +1951,12 @@ axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
 # Add text
-axes.text(6200, 1800, "3")  # Old 4, 3          # 086
-axes.text(12400, 7000, "4") # Old 6, 4             # 025
-axes.text(10300, 6100, "6")  # Not on old one    # 092
 
-# axes.text(10550, 6000, "2") # Old 2
-# axes.text(18450, 6700, "5") # Old 6
+axes.text(8000, 4100, "1")  # Old 3
+axes.text(10550, 6000, "2") # Old 2
+axes.text(6200, 1800, "3")  # Old 4
+axes.text(12400, 7000, "4") # Old 6
+
 
 # New method for making colourbar
 plt.subplots_adjust(bottom=0.21)
@@ -1971,32 +1978,6 @@ fig.text(0.03, 0.53, '$y$ [m]', ha='center', va='center', rotation='vertical')
 plt.savefig(os.path.join(pprfigureDirectory, "SingleKandIdent_m.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "SingleKandIdent_m"), dpi=dpi_value)  
 
-# Get the Kb values for the paper
-
-
-# Finding out which is which
-i = 85 # Number 3
-i = 24 # Number 4
-i = 91 # Number 6
-
-for i in range(len(ph_fa_rows_list)):  
-    if (phantom_df_single.index[i] in key_df_single.index) == True:
-        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
-        K_col = color[np.where(ranges==K_val)[0][0]]
-        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
-        
-        ax.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
-             lw = 4, color = K_col)
-                        
-    else:
-        pass
-    
-Kb3 = key_df_single.loc['hkph_086', 'K_posterior']
-Kb4 = key_df_single.loc['hkph_025', 'K_posterior']
-Kb6 = key_df_single.loc['hkph_092', 'K_posterior']
-
-
 ###############################################################################
 ###############################################################################
 # FIGURE TEN: SINGLE RMSE PLOT
@@ -2004,16 +1985,16 @@ Kb6 = key_df_single.loc['hkph_092', 'K_posterior']
 ###############################################################################
 
 all_well_dens_rmse_h
-# all_well_dens_rmse_a
-# all_well_dens_rmse_c
+all_well_dens_rmse_a
+all_well_dens_rmse_c
 
 rmse_h_list = all_well_dens_rmse_h[0][0] # UB_29_b
-# rmse_a_list = all_well_dens_rmse_a[0][0] # UB_29_b
-# rmse_c_list = all_well_dens_rmse_c[0][0] # UB_29_b
+rmse_a_list = all_well_dens_rmse_a[0][0] # UB_29_b
+rmse_c_list = all_well_dens_rmse_c[0][0] # UB_29_b
 
 len(rmse_h_list)
-# len(rmse_a_list)
-# len(rmse_c_list)
+len(rmse_a_list)
+len(rmse_c_list)
 
 n_faults_ranking_rmse = list(range(len(rmse_h_list)-1)) + [100] 
 len(n_faults_ranking_rmse)
@@ -2048,40 +2029,40 @@ axes.set_xlim([-0.2,4.2])
 
 axes.text(3.6, 3.0, "(a)", fontweight="bold")
 
-# # --------------------------------------
-# ax2 = plt.subplot(3, 1, 2)
+# --------------------------------------
+ax2 = plt.subplot(3, 1, 2)
 
-# plt.axhline(y=rmse_a_list[-1], color="m", ls=":", lw=3)
-# plt.plot(n_faults_ranking_rmse[:-1], rmse_a_list[:-1], "mo", ls="-", label="Age")
+plt.axhline(y=rmse_a_list[-1], color="m", ls=":", lw=3)
+plt.plot(n_faults_ranking_rmse[:-1], rmse_a_list[:-1], "mo", ls="-", label="Age")
 
 
-# plt.ylabel("$RMSE_a$", fontsize = 14, labelpad=7)
-# plt.grid(which="both")
-# plt.xticks(fontsize=14, rotation=45)
-# plt.yticks(fontsize=14, rotation=0)
+plt.ylabel("$RMSE_a$", fontsize = 14, labelpad=7)
+plt.grid(which="both")
+plt.xticks(fontsize=14, rotation=45)
+plt.yticks(fontsize=14, rotation=0)
 
-# axes = plt.gca()
-# axes.set_xticklabels([])
-# axes.set_xlim([-0.2,4.2])
+axes = plt.gca()
+axes.set_xticklabels([])
+axes.set_xlim([-0.2,4.2])
 
-# axes.text(3.6, 80, "(b)", fontweight="bold")
+axes.text(3.6, 80, "(b)", fontweight="bold")
 
-# # --------------------------------------  
-# ax3 = plt.subplot(3, 1, 3)
-# plt.axhline(y=rmse_c_list[-1], color="b", ls=":", lw=3)
-# plt.plot(n_faults_ranking_rmse[:-1], rmse_c_list[:-1], "bo", ls="-", label="Combined")
+# --------------------------------------  
+ax3 = plt.subplot(3, 1, 3)
+plt.axhline(y=rmse_c_list[-1], color="b", ls=":", lw=3)
+plt.plot(n_faults_ranking_rmse[:-1], rmse_c_list[:-1], "bo", ls="-", label="Combined")
 
-# plt.ylabel("$RMSE_c$", fontsize = 14, labelpad=-1.2) # 
-# plt.xlabel("Number of phantom structures", fontsize=14)
-# plt.grid(which="both")
-# plt.xticks(fontsize=14, rotation=0)
-# plt.yticks(fontsize=14, rotation=0)
-# plt.text(12, rmse_c_list[0], "no phantom structures")
+plt.ylabel("$RMSE_c$", fontsize = 14, labelpad=-1.2) # 
+plt.xlabel("Number of phantom structures", fontsize=14)
+plt.grid(which="both")
+plt.xticks(fontsize=14, rotation=0)
+plt.yticks(fontsize=14, rotation=0)
+plt.text(12, rmse_c_list[0], "no phantom structures")
 
-# axes = plt.gca()
-# axes.set_xlim([-0.2,4.2])
+axes = plt.gca()
+axes.set_xlim([-0.2,4.2])
 
-# axes.text(3.6, 154, "(c)", fontweight="bold")
+axes.text(3.6, 154, "(c)", fontweight="bold")
 
 # # # # # 
 plt.savefig(os.path.join(pprfigureDirectory, "SingleRMSE_h_a_c.pdf"), dpi=dpi_value, format=plt_format)  
@@ -2089,34 +2070,122 @@ plt.savefig(os.path.join(pprfigureDirectory, "SingleRMSE_h_a_c"), dpi=dpi_value)
 
 # Getting values for the report
 rmse_h_list[0]
-# rmse_a_list[0]
-# rmse_c_list[0]
+rmse_a_list[0]
+rmse_c_list[0]
 
 rmse_h_list[2] - rmse_h_list[0]
-# rmse_a_list[2] - rmse_a_list[0]
-# rmse_c_list[2] - rmse_c_list[0]
+rmse_a_list[2] - rmse_a_list[0]
+rmse_c_list[2] - rmse_c_list[0]
 
 rmse_h_list[4] - rmse_h_list[2]
-# rmse_a_list[4] - rmse_a_list[2]
-# rmse_c_list[4] - rmse_c_list[2]
+rmse_a_list[4] - rmse_a_list[2]
+rmse_c_list[4] - rmse_c_list[2]
 
 
-# Save these rmse lists to compare to the original!
+# _____________________________________________________________________________
+# FIGURE TEN WITH OTHER LINES
 
-name = 'rmse_h_wout_age.p'
-with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev2', name), 'wb') as fp:
-            pickle.dump(rmse_h_list, fp)
+# Load the other lines
+
+name = 'rmse_h_w_error.p'
+with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev1', name), 'rb') as fp:
+            rmse_h_w_error = pickle.load(fp)
             
-# name = 'rmse_a_w_error.p'
-# with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev1', 
-#                        name), 'wb') as fp:
-#             pickle.dump(rmse_a_list, fp)
+name = 'rmse_a_w_error.p'
+with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev1', name), 'rb') as fp:
+            rmse_a_w_error = pickle.load(fp)
             
-# name = 'rmse_c_w_error.p'
-# with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev1', 
-#                        name), 'wb') as fp:
-#             pickle.dump(rmse_c_list, fp)
+name = 'rmse_c_w_error.p'
+with open(os.path.join(r'C:\workspace\Proj3_PilbaraBarriers\Paper3Figs_postrev1', name), 'rb') as fp:
+            rmse_c_w_error = pickle.load(fp)
+        
+            
+all_well_dens_rmse_h
+all_well_dens_rmse_a
+all_well_dens_rmse_c
 
+rmse_h_list = all_well_dens_rmse_h[0][0] # UB_29_b
+rmse_a_list = all_well_dens_rmse_a[0][0] # UB_29_b
+rmse_c_list = all_well_dens_rmse_c[0][0] # UB_29_b
+
+len(rmse_h_list)
+len(rmse_a_list)
+len(rmse_c_list)
+
+n_faults_ranking_rmse = list(range(len(rmse_h_list)-1)) + [100] 
+len(n_faults_ranking_rmse)
+
+gap = 0.05
+gapy1 = 0.05
+gapy2 = 1.35
+gapy3 = 2.65
+
+#==========================  
+plt.figure(figsize=(5,6))
+#==========================  
+
+ax1 = plt.subplot(3, 1, 1)
+plt.axhline(y=rmse_h_list[-1], color="g", ls=":", lw=3)
+plt.plot(n_faults_ranking_rmse[:-1], rmse_h_list[:-1], "go", ls="-", label="Head")
+
+plt.plot(n_faults_ranking_rmse[:-1], rmse_h_w_error[:-2], "go", ls="--", label="Head with error")
+
+
+# For legend
+plt.plot([0], [-1], "mo", label="Age")
+plt.plot([0], [-1], "bo", label="Combined")
+
+plt.ylabel("$RMSE_h$", fontsize = 14, labelpad=3) 
+plt.grid(which="both")
+plt.xticks(fontsize=14, rotation=45)
+plt.yticks(fontsize=14, rotation=0)
+
+axes = plt.gca()
+
+ax1.set_xticklabels([])
+axes.set_ylim([1.9,3.15])
+axes.set_xlim([-0.2,4.2])
+
+axes.text(3.6, 3.0, "(a)", fontweight="bold")
+
+# --------------------------------------
+ax2 = plt.subplot(3, 1, 2)
+
+plt.axhline(y=rmse_a_list[-1], color="m", ls=":", lw=3)
+plt.plot(n_faults_ranking_rmse[:-1], rmse_a_list[:-1], "mo", ls="-", label="Age")
+
+
+plt.ylabel("$RMSE_a$", fontsize = 14, labelpad=7)
+plt.grid(which="both")
+plt.xticks(fontsize=14, rotation=45)
+plt.yticks(fontsize=14, rotation=0)
+
+axes = plt.gca()
+axes.set_xticklabels([])
+axes.set_xlim([-0.2,4.2])
+
+axes.text(3.6, 80, "(b)", fontweight="bold")
+
+# --------------------------------------  
+ax3 = plt.subplot(3, 1, 3)
+plt.axhline(y=rmse_c_list[-1], color="b", ls=":", lw=3)
+plt.plot(n_faults_ranking_rmse[:-1], rmse_c_list[:-1], "bo", ls="-", label="Combined")
+
+plt.ylabel("$RMSE_c$", fontsize = 14, labelpad=-1.2) # 
+plt.xlabel("Number of phantom structures", fontsize=14)
+plt.grid(which="both")
+plt.xticks(fontsize=14, rotation=0)
+plt.yticks(fontsize=14, rotation=0)
+plt.text(12, rmse_c_list[0], "no phantom structures")
+
+axes = plt.gca()
+axes.set_xlim([-0.2,4.2])
+
+axes.text(3.6, 154, "(c)", fontweight="bold")
+
+# # # # # 
+plt.savefig(os.path.join(pprfigureDirectory, "SingleRMSE_h_a_c_all.pdf"), dpi=dpi_value, format=plt_format)  
+plt.savefig(os.path.join(pprfigureDirectory, "SingleRMSE_h_a_c_all"), dpi=dpi_value)  
 
 
 ###############################################################################
@@ -2174,34 +2243,34 @@ plt.ylabel("$y$ [m]", labelpad=-3)
 plt.xlabel("")
 axes1.text(100, 10300, "(a) Hydraulic head observation data", fontsize=14)
 
-# # ~ # ~ # ~ # ~    
-# ax = plt.subplot(2, 1, 2)
-# # ax.title.set_text("Age")
-# axes2 = plt.gca()
-# sens_obs_file[sens_obs_file["Group"]=="age"].plot.scatter(x="Col", y="Row", c="Sensitivity", s=30, 
-#                                                        colormap="plasma_r", linewidths=0.0, ax=axes2)
+# ~ # ~ # ~ # ~    
+ax = plt.subplot(2, 1, 2)
+# ax.title.set_text("Age")
+axes2 = plt.gca()
+sens_obs_file[sens_obs_file["Group"]=="age"].plot.scatter(x="Col", y="Row", c="Sensitivity", s=30, 
+                                                       colormap="plasma_r", linewidths=0.0, ax=axes2)
 
-# # PLot the real fault location
-# for i in range(len(re_fa_rows_list)):
-#         axes2.plot(re_fa_cols_list_m[i], re_fa_rows_list_m[i], lw = 4, 
-#                  color = real_plot_c, ls=real_plot_ls)
+# PLot the real fault location
+for i in range(len(re_fa_rows_list)):
+        axes2.plot(re_fa_cols_list_m[i], re_fa_rows_list_m[i], lw = 4, 
+                 color = real_plot_c, ls=real_plot_ls)
         
-# axes2.set_xlim([0, param_dict["Lx"]])
-# axes2.set_ylim([0, param_dict["Ly"]])
-# axes2.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
-# axes2.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+axes2.set_xlim([0, param_dict["Lx"]])
+axes2.set_ylim([0, param_dict["Ly"]])
+axes2.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+axes2.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
-# plt.ylabel("$y$ [m]", labelpad=-3)
-# plt.xlabel("$x$ [m]")
-# axes2.text(100, 10300, "(b) Groundwater age observation data", fontsize=14)
+plt.ylabel("$y$ [m]", labelpad=-3)
+plt.xlabel("$x$ [m]")
+axes2.text(100, 10300, "(b) Groundwater age observation data", fontsize=14)
 
 # Change some of the colorbar properties
 
 cax1 = fig.get_axes()[1]
-# cax2 = fig.get_axes()[3]
+cax2 = fig.get_axes()[3]
 
 cax1.set_ylabel("Sensitivity [m per m/d $K_b$]", labelpad=6, fontsize=14)
-# cax2.set_ylabel("Sensitivity [yrs per m/d $K_b$]", labelpad=0, fontsize=14)
+cax2.set_ylabel("Sensitivity [yrs per m/d $K_b$]", labelpad=0, fontsize=14)
 
 plt.savefig(os.path.join(pprfigureDirectory, "Single_Sens.pdf"), dpi=dpi_value, format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "Single_Sens"), dpi=dpi_value)  
@@ -2211,7 +2280,7 @@ plt.savefig(os.path.join(pprfigureDirectory, "Single_Sens"), dpi=dpi_value)
 # FIGURE TWELVE: COMBINED METRIC PLOT
 ###############################################################################
 ###############################################################################
-'''
+
 # Plotting the mean metric
 
 all_well_dens_mmetric
@@ -2268,13 +2337,13 @@ plt.ylabel(r"$\rho $")
 
 plt.savefig(os.path.join(pprfigureDirectory, "AllMetric_welldens.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "AllMetric_welldens"), dpi=dpi_value)  
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE THIRTEEN: FILTERED ARRAY STATS FOR HEAD AND AGE
 ###############################################################################
 ###############################################################################
-'''
+
 wells_diff_h_mean_list = []
 wells_diff_h_std_list = []
 
@@ -2478,13 +2547,13 @@ plt.savefig(os.path.join(pprfigureDirectory, "Diff_filteredStats"), dpi=dpi_valu
 
 #%~#%~#%~#%~#%~#%~#%~#%~
 plt.close('all')
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE FOURTEEN: MODEL SET UP
 ###############################################################################
 ###############################################################################
-'''hk_array_barrier = param_dict["hk_aquifer"] * np.ones((1, 
+hk_array_barrier = param_dict["hk_aquifer"] * np.ones((1, 
                                                        100, 
                                                        200), 
                                                        dtype=np.float32)  
@@ -2518,8 +2587,8 @@ plt.axvline(x=20000, ymin=0, ymax=1, lw=10, color="orange") #, ls=(0, (2,1)),
 plt.xlim([0, 20000])
 plt.ylim([0, 10000])
 
-plt.text(4000, 7000, "$K_{a}$ = 1 m/d")
-plt.text(10600, 3500, "$K_{b}$ = 1e-3 m/d")
+# plt.text(4000, 7000, "$K_{a}$ = 1 m/d")
+# plt.text(10600, 3500, "$K_{b}$ = 1e-3 m/d")
 
 # plt.arrow(10500, 3700, 500, 0, color="k", lw=1, head_width=100, 
 #           overhang=.1, length_includes_head=True, alpha=.8)
@@ -2541,15 +2610,15 @@ pp_df = pd.read_csv(r'C:\workspace\Proj3_PilbaraBarriers\UB_51\pilotpoints.csv')
 
 ax.scatter(pp_df.x, pp_df.y,marker='x',c='0.3',s=10)
 
-plt.savefig(pprfigureDirectory + "\model_set_up.pdf", format="pdf", dpi=dpi_value)
-plt.savefig(pprfigureDirectory + "\model_set_up", dpi=dpi_value)
-'''
+plt.savefig(pprfigureDirectory + "\model_set_up_notext.pdf", format="pdf", dpi=dpi_value)
+plt.savefig(pprfigureDirectory + "\model_set_up_notext", dpi=dpi_value)
+
 ###############################################################################
 ###############################################################################
 # FIGURE SIXTEEN: Difference in age and head map for single example
 ###############################################################################
 ###############################################################################
-'''
+
 # - Setting up the real model -------------------------------------------------
 re_fault_coordinates = np.load(os.path.join(dataDirectory, "re_fault_coords.npy"))
 
@@ -2580,7 +2649,7 @@ for i in range(len(re_fa_length_list)):
 # - Setting up data output ----------------------------------------------------
 
 all_model_heads = []
-# all_model_ages = []
+all_model_ages = []
 
 # - Setting up the model ------------------------------------------------------
 
@@ -2971,13 +3040,13 @@ plt.gcf().text(0.19513686463836777, (0.210+gap_amount), "(b) Groundwater age dif
 
 plt.savefig(os.path.join(pprfigureDirectory, "HeadAndAgeDiff.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "HeadAndAgeDiff"), dpi=dpi_value)  
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE FOUR: RMSE 100 only
 ###############################################################################
 ###############################################################################
-'''
+
 well_densities # x axis
 
 head_ps1        = []
@@ -3253,7 +3322,7 @@ plt.savefig(os.path.join(pprfigureDirectory, "RMSE_only100_sep.pdf"), dpi=dpi_va
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_only100_sep"), dpi=dpi_value)    
 
 plt.close("all")
-'''
+
 ##############################################################################
 # Table for paper - Single results
 
@@ -3271,7 +3340,7 @@ key_df_single_table.to_csv(fileName, encoding='utf-8', index=True)
 ###############################################################################
 # PILOT POINTS RMSE VALUES
 ###############################################################################
-'''
+
 pilotpt_mdls = ['18_b', '18_h', '18_n',
                 '19_b', '19_h', '19_n',
                 '20_b', '20_h', '20_n',
@@ -3446,12 +3515,12 @@ print("PS3")
 c_ps3_f[0] - c_ps3_f[-1]
 print("PLT")
 f_c_rmse_avr[0] - f_c_rmse_avr[-1]
-'''
+
 
 ###############################################################################
 # PILOT POINTS RMSE VALUES - all combined figure
 ###############################################################################  
- '''   
+    
 #==========================  
 plt.figure(figsize=(12, 6))
 #==========================
@@ -3719,13 +3788,13 @@ min(min_list) #-2.005
     
 plt.close('all')
 
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE SIXTEEN: ALL OBS WELL LOCATIONS
 ###############################################################################
 ###############################################################################
-'''all_obs_rc_df = []
+all_obs_rc_df = []
 
 all_mdls = []
 
@@ -3826,13 +3895,13 @@ ax.legend(bbox_to_anchor=(1.15, -0.50))
 plt.savefig(os.path.join(pprfigureDirectory, "ObsLocsAll.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "ObsLocsAll"), dpi=dpi_value)  
 
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE ONE: LOCATION OF PHANTOM FAULTS - BUT IN UNITS SAME AS MODEL
 ###############################################################################
 ###############################################################################
-  ''' 
+   
 def plot_phantom_faults_m(ph_fa_cols_list, ph_fa_rows_list, 
                         re_fa_cols_list, re_fa_rows_list):
     for i in range(len(ph_fa_rows_list)):
@@ -3898,13 +3967,13 @@ plt.tight_layout()
 
 plt.savefig(os.path.join(pprfigureDirectory, "AllPhStr.pdf"), dpi=dpi_value, format=plt_format)
 plt.savefig(os.path.join(pprfigureDirectory, "AllPhStr"), dpi=dpi_value)
-'''
+
 ###############################################################################
 ###############################################################################
 # FIGURE: HEAD AND AGE DIFFERENCES, CHANGED CONTOURS
 ###############################################################################
 ###############################################################################
-'''
+
 #==================================
 fig = plt.figure(figsize = (7, 7))
 #==================================
@@ -3967,5 +4036,5 @@ cb2.update_ticks()
 plt.savefig(os.path.join(pprfigureDirectory, "HeadAndAgeDiff2.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "HeadAndAgeDiff2"), dpi=dpi_value)  
 
-'''
+
 plt.close("all")
