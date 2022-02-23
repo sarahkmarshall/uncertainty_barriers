@@ -854,8 +854,6 @@ max_a = np.max(original_age_file[:, :])
 ###############################################################################
 ###############################################################################
 
-
-
 all_mdls = []
 
 for ovrn in overall_names_list:
@@ -929,7 +927,7 @@ for n_df in range(len(all_mdls)):
     
     img = ax.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
                c=pest_obs_file_head.Measured,
-               s=sz, cmap="coolwarm_r")
+               s=sz, cmap="coolwarm_r", vmin=200, vmax=300)
     
   
 
@@ -1090,6 +1088,29 @@ axes3.legend(bbox_to_anchor=(1.1, -0.22))
 
 #plt.savefig(os.path.join(pprfigureDirectory, "AllPhStr.pdf"), dpi=dpi_value, format=plt_format)
 plt.savefig(os.path.join(pprfigureDirectory, "AllPhStr"), dpi=dpi_value)
+
+
+######
+# Reference figure for me only
+
+      
+#==========================    
+plt.figure(figsize=(20, 20))
+#==========================    
+
+plt.subplot(1, 1, 1)
+plot_phantom_faults_m(ph_fa_cols_list1_m, ph_fa_rows_list1_m, 
+                    [[0]], [[0]])
+
+for i in range(len(ph_fa_cols_list1_m)):
+    xv = ph_fa_cols_list1_m[i][0]
+    yv = ph_fa_rows_list1_m[i][0]
+    txt = "hkph_%i" %(i+1) 
+    plt.text(xv, yv, txt)
+
+plt.savefig(os.path.join(pprfigureDirectory, "ref_ph_names"), dpi=dpi_value)
+
+
 
 ###############################################################################
 ###############################################################################
@@ -1735,7 +1756,7 @@ for i in ranges:
 color = cm.terrain(np.linspace(0,1,len(ranges)))
 
 #==========================  
-fig = plt.figure(figsize=(7, 7))    
+fig = plt.figure(figsize=(6, 8))    
 #==========================  
 
 ax  = plt.subplot(2,1,1)
@@ -1761,7 +1782,7 @@ for i in range(len(ph_fa_rows_list)):
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
         ax.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
-             lw = 4, color = K_col)
+             lw = 3, color = K_col)
                         
     else:
         pass
@@ -1781,10 +1802,25 @@ axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
 # Add text
 
-axes.text(8000, 4100, "1")  # Old 1
-axes.text(6200, 1800, "2")  # Old 3
-axes.text(10350, 5600, "3") # Old 2
-axes.text(9900, 7000, "4") # Wasn't in old
+axes.text(8000, 4100, "1")  # 085
+axes.text(6200, 1900, "2")  # 086
+#axes.text(10350, 5600, "3") # 075
+axes.text(9800, 6900, "4") # 092
+axes.text(2500, 2900, "5") # 081
+axes.text(9100, 5000, "6") # 063
+axes.text(50, 5000, "7") # 024
+
+
+'''
+In order of ident for this fig:
+axes.text(8000, 4100, "1")  # 085
+axes.text(6200, 1900, "2")  # 086
+axes.text(2500, 2900, "3") # 081
+axes.text(9800, 6900, "4") # 092
+axes.text(9100, 5000, "5") # 063
+axes.text(50, 5000, "6") # 024
+'''
+
 
 axes.axes.get_xaxis().set_visible(False)
 plt.text(500, 9000, "(a) Head and age data (with error)")
@@ -1811,17 +1847,10 @@ key_df_single_table_s2.to_csv(fileName, encoding='utf-8', index=True)
 # First plot --------------------------------------------------
 # Plot the hydraulic conductivity values of identifiable faults.
  
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
-        
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
-
+#min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
+#max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
+#range_values = max_value*100-min_value*100 #max_value-min_value 
+#ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
 
 ax  = plt.subplot(2,1,2)
 
@@ -1846,7 +1875,7 @@ for i in range(len(ph_fa_rows_list)):
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
         ax.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
-             lw = 4, color = K_col)
+             lw = 3, color = K_col)
                         
     else:
         pass
@@ -1866,19 +1895,30 @@ axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
 # Add text
 
-axes.text(8000, 4100, "1")  # Old 1
-axes.text(6200, 1800, "2")  # Old 3
-axes.text(10350, 5600, "3") # Old 2
-axes.text(9900, 7000, "4") # Wasn't in old
+#axes.text(8000, 4100, "1")  # 085
+axes.text(6200, 1900, "2")  # 086
+#axes.text(10350, 5600, "3") # 075
+axes.text(9800, 6900, "4") # 092
+#axes.text(2500, 2900, "5") # 081
+#axes.text(9100, 5000, "6") # 063
+#axes.text(50, 5000, "7") # 024
+axes.text(10900, 8000, "8") # 66
+
+'''
+axes.text(6200, 1900, "1")  # 86
+axes.text(9800, 6900, "2") # 92
+axes.text(10900, 8000, "3") # 66
+'''
 
 plt.text(500, 9000, "(a) Head data only (no error)")
 
 #---------------------------------------------------------------
-
+plt.tight_layout()
 # New method for making colourbar
 plt.subplots_adjust(bottom=0.21)
+#plt.subplots_adjust(top = 0.75, hspace=0.14, wspace=0.1) # , bottom=0.01, 
 
-cbaxes1 = fig.add_axes([0.25, 0.07, 0.5, 0.03])  # x, y, length, width
+cbaxes1 = fig.add_axes([0.18, 0.11, 0.3, 0.025])  # x, y, length, width
 
 cmap = mpl.cm.ScalarMappable(
       norm = mcolors.Normalize(min_value, max_value), 
@@ -1886,11 +1926,14 @@ cmap = mpl.cm.ScalarMappable(
 
 cmap.set_array([])
 cb = fig.colorbar(cmap,  cax=cbaxes1, orientation="horizontal")
-cb.set_label("Log $K_b$ [m/d]", labelpad=-30, x=1.2, y=0.5, fontsize=14)
+tick_locator = ticker.MaxNLocator(nbins = 3)
+cb2.locator = tick_locator
+cb2.update_ticks()
+cb.set_label("Log $K_b$ [m/d]", labelpad=-28, x=1.3, y=0.5, fontsize=12)
 
 # plt.tight_layout()
-fig.text(0.51, 0.13, '$x$ [m]', ha='center', va='center')
-fig.text(0.02, 0.53, '$y$ [m]', ha='center', va='center', rotation='vertical')
+fig.text(0.54, 0.16, '$x$ [m]', ha='center', va='center')
+fig.text(0.02, 0.52, '$y$ [m]', ha='center', va='center', rotation='vertical')
 
 #plt.savefig(os.path.join(pprfigureDirectory, "SingleKandIdent_m.pdf"), dpi=dpi_value,format=plt_format)  
 plt.savefig(os.path.join(pprfigureDirectory, "SingleKandIdent_m_s1s2"), dpi=dpi_value)  
@@ -1998,8 +2041,10 @@ for fault in range(len(re_fa_cols_list_e4)):
 #------------------------------------------------------------------------------
 # Setting up the obs well data
 
+# In line flow regime, edge of domain, small, multiple (50 then 500)
+
 all_mdls_e = ["UB_54_b", "UB_55_b", "UB_65_b", "UB_57_b",
-              "UB_58_b", "UB_59_b", "UB_60_b"]  
+              "UB_58_b", "UB_59_b", "UB_60_b", "UB_61_a"]  
         
 all_obs_pest_obs_file_e = []
          
@@ -2077,7 +2122,9 @@ for mdl in all_mdls_e:
 fig = plt.figure(figsize=(7, 7))    
 #==========================  ##
 lw_fig9a=3
-
+x_alp = 500
+y_alp = 10400# 8000
+fszalpha=11
 
 ax1  = plt.subplot(4,2,1)
 
@@ -2092,7 +2139,7 @@ pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
   
 img = ax1.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
              c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)
         
 # Format plot
 axes = plt.gca()
@@ -2102,6 +2149,8 @@ axes.axes.get_xaxis().set_visible(False)
 
 plt.yticks(fontsize=12, rotation=45)
 axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(a) Sub-parallel to flow", fontsize=fszalpha)
 
 # -----------------------------------------------
 ax2  = plt.subplot(4,2,3)
@@ -2116,7 +2165,7 @@ pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
   
 img = ax2.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
              c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")   
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
 
 # Format plot   
 axes = plt.gca()
@@ -2126,6 +2175,9 @@ axes.axes.get_xaxis().set_visible(False)
 
 plt.yticks(fontsize=12, rotation=45)
 axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(c) Edge of domain", fontsize=fszalpha)
+
 
 #------------------------------------------------
 ax3  = plt.subplot(4,2,5)
@@ -2140,7 +2192,7 @@ pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
   
 img = ax3.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
              c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")   
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
 
 # Format plot           
 axes = plt.gca()
@@ -2150,6 +2202,10 @@ axes.axes.get_xaxis().set_visible(False)
 
 plt.yticks(fontsize=12, rotation=45)
 axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(e) Short relative to domain", fontsize=fszalpha)
+
+
 
 # ----------------------------------------------------------
 ax4  = plt.subplot(4,2,7)
@@ -2164,22 +2220,26 @@ pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
   
 img = ax4.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
              c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")   
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
 
 # Format plot           
 axes = plt.gca()
 axes.set_xlim([0, param_dict["Lx"]])                
 axes.set_ylim([0, param_dict["Ly"]]) 
 
-plt.xticks(fontsize=12, rotation=45)
-plt.xticks([10000, 20000]) # , ["", "2 km"]
+#plt.xticks(fontsize=12, rotation=45)
+plt.xticks(fontsize=12)
+
+plt.xticks([5000, 10000, 15000, 20000]) # , ["", "2 km"]
 axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
 plt.yticks(fontsize=12, rotation=45)
 axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
+plt.text(x_alp, y_alp, "(g) Multiple barriers", fontsize=fszalpha)
 
 #------------------------------------------------------------------------------
+# e
 ax5  = plt.subplot(4,2,2)
 
 ix = 0
@@ -2187,11 +2247,12 @@ ix = 0
 key_df_single = key_dfs_e[ix]
 phantom_df_single = phantom_dfs_e[ix]
 
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
+min_value = -6.0
+max_value =  0.0
 range_values = max_value*100-min_value*100 #max_value-min_value 
 ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
 
+'''
 # Add the observation data
 pest_obs_file = all_obs_pest_obs_file_e[ix]
 pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
@@ -2199,19 +2260,27 @@ pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
 img = ax5.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
              c=pest_obs_file_head.Measured,
              s=sz, cmap="coolwarm_r")
-
+'''
 # Plot the phantom fault results
 K_leg_value = []
 for i in ranges:
     K_leg_value.append("$\geqslant$ %d" %i)
                           
 color = cm.terrain(np.linspace(0,1,len(ranges)))
+
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
         
-    # I am going to re-plot the key faults so they are over the top of the grey ones
+    ax5.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)
+
+       
+# I am going to re-plot the key faults so they are over the top of the grey ones
 for i in range(len(ph_fa_rows_list)):  
     if (phantom_df_single.index[i] in key_df_single.index) == True:
+        idx_nm = phantom_df_single.index[i]
         K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
         K_col = color[np.where(ranges==K_val)[0][0]]
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
@@ -2221,9 +2290,14 @@ for i in range(len(ph_fa_rows_list)):
     else:
         pass
 
-axes = plt.gca()    
+axes = plt.gca()   
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+ 
 axes.axes.get_xaxis().set_visible(False)
 axes.axes.get_yaxis().set_visible(False)
+
+plt.text(x_alp, y_alp, "(b)", fontsize=fszalpha)
 
 #------------------------------------------------------------------------------
 ax6  = plt.subplot(4,2,4)
@@ -2232,32 +2306,24 @@ ix = 1
 key_df_single = key_dfs_e[ix]
 phantom_df_single = phantom_dfs_e[ix]
 
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
 
-
-# Add the observation data
-pest_obs_file = all_obs_pest_obs_file_e[ix]
-pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
-
-img = ax6.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
-             c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
-        
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
-
-       
-    # I am going to re-plot the key faults so they are over the top of the grey ones
+  
+# Plot all phantom structures
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
+    
+    ax6.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+         lw = lw_ps, color = K_col)   
+    
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
 for i in range(len(ph_fa_rows_list)):  
     if (phantom_df_single.index[i] in key_df_single.index) == True:
         K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
+        K_nms.append(phantom_df_single.index[i])
+        K_vals.append((np.log10(phantom_df_single["K_posterior"][i])))
         K_col = color[np.where(ranges==K_val)[0][0]]
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
@@ -2268,9 +2334,13 @@ for i in range(len(ph_fa_rows_list)):
         pass
 
 axes = plt.gca()    
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+
 axes.axes.get_xaxis().set_visible(False)
 axes.axes.get_yaxis().set_visible(False)
 
+plt.text(x_alp, y_alp, "(d)", fontsize=fszalpha)
 
 #------------------------------------------------------------------------------
 ax7  = plt.subplot(4,2,6)
@@ -2280,32 +2350,21 @@ ix = 2
 key_df_single = key_dfs_e[ix]
 phantom_df_single = phantom_dfs_e[ix]
 
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
-
-
-# Add the observation data
-pest_obs_file = all_obs_pest_obs_file_e[ix]
-pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
-
-img = ax7.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
-             c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
         
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
-
-       
-    # I am going to re-plot the key faults so they are over the top of the grey ones
+    ax7.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)  
+        
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
 for i in range(len(ph_fa_rows_list)):  
     if (phantom_df_single.index[i] in key_df_single.index) == True:
         K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
+        K_vals.append((np.log10(phantom_df_single["K_posterior"][i])))
+        K_nms.append(phantom_df_single.index[i])
         K_col = color[np.where(ranges==K_val)[0][0]]
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
@@ -2316,8 +2375,15 @@ for i in range(len(ph_fa_rows_list)):
         pass
 
 axes = plt.gca()    
+
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]])
+
 axes.axes.get_xaxis().set_visible(False)
 axes.axes.get_yaxis().set_visible(False)
+
+plt.text(x_alp, y_alp, "(f)", fontsize=fszalpha)
+
 
 #------------------------------------------------------------------------------
 ax8  = plt.subplot(4,2,8)
@@ -2327,32 +2393,21 @@ ix = 3
 key_df_single = key_dfs_e[ix]
 phantom_df_single = phantom_dfs_e[ix]
 
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
-
-
-# Add the observation data
-pest_obs_file = all_obs_pest_obs_file_e[ix]
-pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
-
-img = ax8.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
-             c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
         
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
-
-       
-    # I am going to re-plot the key faults so they are over the top of the grey ones
+    ax8.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)  
+        
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
 for i in range(len(ph_fa_rows_list)):  
     if (phantom_df_single.index[i] in key_df_single.index) == True:
         K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
+        K_vals.append(np.log10(phantom_df_single["K_posterior"][i]))
+        K_nms.append(phantom_df_single.index[i])
         K_col = color[np.where(ranges==K_val)[0][0]]
         K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
         
@@ -2362,122 +2417,54 @@ for i in range(len(ph_fa_rows_list)):
     else:
         pass
 
-axes = plt.gca()    
+axes = plt.gca()  
+
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]])
+  
 axes.axes.get_yaxis().set_visible(False)
 
-'''
+plt.xticks(fontsize=12)
+plt.xticks([5000, 10000, 15000,20000]) # , ["", "2 km"]
 
-#------------------------------------------------------------------------------
-ax9  = plt.subplot(4,3,3)
+axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
-ix = 4
-
-key_df_single = key_dfs_e[ix]
-phantom_df_single = phantom_dfs_e[ix]
-
-#------------------------------------------------------------------------------
-ax10  = plt.subplot(4,3,6)
-
-ix = 5
-
-key_df_single = key_dfs_e[ix]
-phantom_df_single = phantom_dfs_e[ix]
-
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
+plt.text(x_alp, y_alp, "(h)", fontsize=fszalpha)
 
 
-# Add the observation data
-pest_obs_file = all_obs_pest_obs_file_e[ix]
-pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
 
-img = ax10.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
-             c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
-        
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
+# Whole figure formatting -----------------------------------------------------
+plt.subplots_adjust(bottom=0.16)
+plt.subplots_adjust(top = 0.93, hspace=0.15, wspace=0.1) # , bottom=0.01, 
 
-       
-    # I am going to re-plot the key faults so they are over the top of the grey ones
-for i in range(len(ph_fa_rows_list)):  
-    if (phantom_df_single.index[i] in key_df_single.index) == True:
-        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
-        K_col = color[np.where(ranges==K_val)[0][0]]
-        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
-        
-        ax10.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
-             lw = 4, color = K_col)
-                        
-    else:
-        pass
+# Adding common x and y labels
+fig.text(0.5, 0.09, '$x$ [m]', ha='center', va='center')
+fig.text(0.015, 0.52, '$y$ [m]', ha='center', va='center', rotation='vertical')
 
-axes = plt.gca()    
-axes.axes.get_xaxis().set_visible(False)
-axes.axes.get_yaxis().set_visible(False)
+# COLOURBAR FOR OBS WELLS
+cbaxes1 = fig.add_axes([0.1, 0.055, 0.24, 0.02]) 
+cb1 = plt.colorbar(img, cax = cbaxes1, orientation="horizontal")  
+cb1.set_label('Hydraulic head [m]', labelpad=-25, x=1.44, y=0.6, fontsize=12)
+cb1.ax.tick_params(labelsize=12)
 
-#------------------------------------------------------------------------------
-ax11  = plt.subplot(4,3,9)
+# COLOURBAR FOR THE HK
+cbaxes2 = fig.add_axes([0.56, 0.055, 0.24, 0.02]) 
 
-ix = 6
+cmap = mpl.cm.ScalarMappable(
+      norm = mcolors.Normalize(min_value, max_value), 
+      cmap = plt.get_cmap('terrain'))
 
-key_df_single = key_dfs_e[ix]
-phantom_df_single = phantom_dfs_e[ix]
+cmap.set_array([])
+cb2 = fig.colorbar(cmap,  cax=cbaxes2, orientation="horizontal")
 
-#------------------------------------------------------------------------------
-ax12  = plt.subplot(4,3,9)
+tick_locator = ticker.MaxNLocator(nbins = 3)
+cb2.locator = tick_locator
+cb2.update_ticks()
 
-ix = 6
+cb2.set_label("log $K_b$ [m/d]", labelpad=-28, x=1.3, y=0.6, fontsize=12)
+#cb2.set_label("log $K_b$ [m/d]", fontsize=12)
 
-key_df_single = key_dfs_e[ix]
-phantom_df_single = phantom_dfs_e[ix]
-
-min_value = np.floor(np.log10(key_df_single["K_posterior"].min()))
-max_value = np.ceil(np.log10(key_df_single["K_posterior"].max()))
-range_values = max_value*100-min_value*100 #max_value-min_value 
-ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
-
-
-# Add the observation data
-pest_obs_file = all_obs_pest_obs_file_e[ix]
-pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
-
-img = ax11.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
-             c=pest_obs_file_head.Measured,
-             s=sz, cmap="coolwarm_r")
-        
-K_leg_value = []
-for i in ranges:
-    K_leg_value.append("$\geqslant$ %d" %i)
-                          
-color = cm.terrain(np.linspace(0,1,len(ranges)))
-
-       
-    # I am going to re-plot the key faults so they are over the top of the grey ones
-for i in range(len(ph_fa_rows_list)):  
-    if (phantom_df_single.index[i] in key_df_single.index) == True:
-        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
-        # K_val = np.floor(np.log10((phantom_df_single["K_posterior"][i])))
-        K_col = color[np.where(ranges==K_val)[0][0]]
-        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
-        
-        ax11.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
-             lw = 4, color = K_col)
-                        
-    else:
-        pass
-
-axes = plt.gca()    
-axes.axes.get_xaxis().set_visible(False)
-axes.axes.get_yaxis().set_visible(False)
-
-'''
+plt.savefig(os.path.join(pprfigureDirectory, "Single_obs_k_e"), dpi=dpi_value)  
 
 ###############################################################################
 ###############################################################################
@@ -3154,6 +3141,540 @@ plt.tight_layout()
 #plt.savefig(os.path.join(pprfigureDirectory, "RMSE_all_mean.pdf"), dpi=dpi_value, format=plt_format)        
 plt.savefig(os.path.join(pprfigureDirectory, "RMSE_all_mean"), dpi=dpi_value)        
 
+
+###############################################################################
+###############################################################################
+# FIGURE THIRTEEN: "ROUND 2" OF INVERSION - MOVING TOWARDS CONVERGENCE
+###############################################################################
+###############################################################################
+
+
+###############################################################################
+###############################################################################
+# FIGURE NINE A: DIFFERENT CASE STUDIES
+###############################################################################
+###############################################################################
+
+
+# Setting up Phantom structure parameters and data for the plotting  ----------------------------
+
+# Example 1 - in line with the flow regime
+re_fault_coordinates_e1 = np.load(os.path.join(
+    'C:\\workspace\\Proj3_PilbaraBarriers\\UB_54\\re_fault_coords.npy'))
+
+# Set up real barriers at different sizes and locations
+re_fa_rows_list_e1, re_fa_cols_list_e1, re_fa_length_list_e1 = (functions_proj_3.barriers.makeFaultRowCols(
+                            re_fault_coordinates_e1, 
+                            param_dict["nrow"], 
+                            param_dict["ncol"]))
+
+re_fa_rows_list_e1_m = []
+re_fa_cols_list_e1_m = []
+
+for fault in range(len(re_fa_cols_list_e1)):
+    faultcols_new = []
+    faultrows_new = []
+    for cell in range(len(re_fa_cols_list_e1[fault])):
+        faultcols_new.append(re_fa_cols_list_e1[fault][cell]*delr)
+        faultrows_new.append(re_fa_rows_list_e1[fault][cell]*delc)
+    re_fa_cols_list_e1_m.append(faultcols_new)
+    re_fa_rows_list_e1_m.append(faultrows_new)
+
+
+# # #
+re_fault_coordinates_e2 = np.load(os.path.join(
+    'C:\\workspace\\Proj3_PilbaraBarriers\\UB_55\\re_fault_coords.npy'))
+
+# Set up real barriers at different sizes and locations
+re_fa_rows_list_e2, re_fa_cols_list_e2, re_fa_length_list_e2 = (functions_proj_3.barriers.makeFaultRowCols(
+                            re_fault_coordinates_e2, 
+                            param_dict["nrow"], 
+                            param_dict["ncol"]))
+
+re_fa_rows_list_e2_m = []
+re_fa_cols_list_e2_m = []
+
+for fault in range(len(re_fa_cols_list_e2)):
+    faultcols_new = []
+    faultrows_new = []
+    for cell in range(len(re_fa_cols_list_e2[fault])):
+        faultcols_new.append(re_fa_cols_list_e2[fault][cell]*delr)
+        faultrows_new.append(re_fa_rows_list_e2[fault][cell]*delc)
+    re_fa_cols_list_e2_m.append(faultcols_new)
+    re_fa_rows_list_e2_m.append(faultrows_new)
+
+
+re_fault_coordinates_e3 = np.load(os.path.join(
+    'C:\\workspace\\Proj3_PilbaraBarriers\\UB_65\\re_fault_coords.npy'))
+
+# Set up real barriers at different sizes and locations
+re_fa_rows_list_e3, re_fa_cols_list_e3, re_fa_length_list_e3 = (functions_proj_3.barriers.makeFaultRowCols(
+                            re_fault_coordinates_e3, 
+                            param_dict["nrow"], 
+                            param_dict["ncol"]))
+
+re_fa_rows_list_e3_m = []
+re_fa_cols_list_e3_m = []
+
+for fault in range(len(re_fa_cols_list_e3)):
+    faultcols_new = []
+    faultrows_new = []
+    for cell in range(len(re_fa_cols_list_e3[fault])):
+        faultcols_new.append(re_fa_cols_list_e3[fault][cell]*delr)
+        faultrows_new.append(re_fa_rows_list_e3[fault][cell]*delc)
+    re_fa_cols_list_e3_m.append(faultcols_new)
+    re_fa_rows_list_e3_m.append(faultrows_new)
+
+
+re_fault_coordinates_e4 = np.load(os.path.join(
+    'C:\\workspace\\Proj3_PilbaraBarriers\\UB_57\\re_fault_coords.npy'))
+
+# Set up real barriers at different sizes and locations
+re_fa_rows_list_e4, re_fa_cols_list_e4, re_fa_length_list_e4 = (functions_proj_3.barriers.makeFaultRowCols(
+                            re_fault_coordinates_e4, 
+                            param_dict["nrow"], 
+                            param_dict["ncol"]))
+
+re_fa_rows_list_e4_m = []
+re_fa_cols_list_e4_m = []
+
+for fault in range(len(re_fa_cols_list_e4)):
+    faultcols_new = []
+    faultrows_new = []
+    for cell in range(len(re_fa_cols_list_e4[fault])):
+        faultcols_new.append(re_fa_cols_list_e4[fault][cell]*delr)
+        faultrows_new.append(re_fa_rows_list_e4[fault][cell]*delc)
+    re_fa_cols_list_e4_m.append(faultcols_new)
+    re_fa_rows_list_e4_m.append(faultrows_new)
+
+
+#------------------------------------------------------------------------------
+# Setting up the obs well data
+
+# In line flow regime, edge of domain, small, multiple (50 then 500)
+
+all_mdls_e = ["UB_54_b", "UB_55_b", "UB_65_b", "UB_57_b",
+              "UB_58_b", "UB_59_b", "UB_60_b", "UB_61_a"]  
+        
+all_obs_pest_obs_file_e = []
+         
+mdl = all_mdls_e[0]       
+for mdl in all_mdls_e:
+    path = os.path.join(proj_3_folder, mdl)
+    pest_obs_filename_txt = os.path.join(path, (mdl + "_reg.rei"))
+    pest_obs_file = pd.read_csv(pest_obs_filename_txt, skiprows=6,
+                        delim_whitespace=True, encoding='utf-8-sig') 
+    pest_obs_file.index = pest_obs_file.Name
+    
+    # Add the row and column information to the head and age observations
+    pest_obs_file["Row"] = np.zeros(len(pest_obs_file.index))
+    pest_obs_file["Col"] = np.zeros(len(pest_obs_file.index))
+    
+    for idx in pest_obs_file.index:
+        if (pest_obs_file.loc[idx, "Group"] == "head" or 
+            pest_obs_file.loc[idx, "Group"] == "age"):
+            pest_obs_file.loc[idx, "Row"] = int(idx[1:4])
+            pest_obs_file.loc[idx, "Col"] = int(idx[5:8])
+        else:
+            pass
+    
+    # Change row and column information to be same units as model
+    
+    pest_obs_file["Row100"] = np.zeros(len(pest_obs_file.index))
+    pest_obs_file["Col100"] = np.zeros(len(pest_obs_file.index))
+    
+    for idx in pest_obs_file.index:
+        if (pest_obs_file.loc[idx, "Group"] == "head" or 
+            pest_obs_file.loc[idx, "Group"] == "age"):
+            pest_obs_file.loc[idx, "Row100"] = pest_obs_file.loc[idx, "Row"]*100
+            pest_obs_file.loc[idx, "Col100"] = pest_obs_file.loc[idx, "Col"]*100
+        else:
+            pass
+        
+    all_obs_pest_obs_file_e.append(pest_obs_file)
+    
+    
+#------------------------------------------------------------------------------
+# Setting up the results
+
+phantom_dfs_e = []
+key_dfs_e = []
+
+# Loop
+mdl = all_mdls_e[0]       
+for mdl in all_mdls_e:
+    
+    path = os.path.join(proj_3_folder, mdl, "Data")
+    phantom_df_f = os.path.join(path, "phantom_df.csv")
+    
+    phantom_df = pd.read_csv(phantom_df_f)
+    
+    phantom_dfs_e.append(phantom_df)
+
+    key_df_f = os.path.join(path, "key_dataframe.csv") # or key_df for all faults, key is just those identified >0.8 and low K
+    key_df = pd.read_csv(key_df_f)
+
+    key_df["length_diff"] = abs(length_real_barrier - key_df["length"])
+
+    n_key_f = len(key_df.index)
+
+    phantom_df.index = phantom_df.param_name
+
+    key_df.index = key_df.param_name
+    
+    key_dfs_e.append(key_df)
+    
+
+#------------------------------------------------------------------------------
+# Plotting the data
+
+#==========================  
+fig = plt.figure(figsize=(7, 7))    
+#==========================  ##
+lw_fig9a=3
+x_alp = 500
+y_alp = 10400# 8000
+fszalpha=11
+
+ax1  = plt.subplot(4,2,1)
+
+# Plot the real fault location
+for i in range(len(re_fa_rows_list_e1)):
+        ax1.plot(re_fa_cols_list_e1_m[i], re_fa_rows_list_e1_m[i], lw = lw_fig9a, 
+                 color = real_plot_c, ls='-')
+        
+# Add the observation data
+pest_obs_file = all_obs_pest_obs_file_e[0]
+pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
+  
+img = ax1.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
+             c=pest_obs_file_head.Measured,
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)
+        
+# Format plot
+axes = plt.gca()
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+axes.axes.get_xaxis().set_visible(False)
+
+plt.yticks(fontsize=12, rotation=45)
+axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(a) Sub-parallel to flow", fontsize=fszalpha)
+
+# -----------------------------------------------
+ax2  = plt.subplot(4,2,3)
+
+# Plot the real fault location
+for i in range(len(re_fa_rows_list_e2)):
+        ax2.plot(re_fa_cols_list_e2_m[i], re_fa_rows_list_e2_m[i], lw = lw_fig9a, 
+                 color = real_plot_c, ls='-')
+# Add the observation data
+pest_obs_file = all_obs_pest_obs_file_e[1]
+pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
+  
+img = ax2.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
+             c=pest_obs_file_head.Measured,
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
+
+# Format plot   
+axes = plt.gca()
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+axes.axes.get_xaxis().set_visible(False)
+
+plt.yticks(fontsize=12, rotation=45)
+axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(c) Edge of domain", fontsize=fszalpha)
+
+
+#------------------------------------------------
+ax3  = plt.subplot(4,2,5)
+
+# Plot the real fault location
+for i in range(len(re_fa_rows_list_e3)):
+        ax3.plot(re_fa_cols_list_e3_m[i], re_fa_rows_list_e3_m[i], lw = lw_fig9a, 
+                 color = real_plot_c, ls='-')
+# Add the observation data
+pest_obs_file = all_obs_pest_obs_file_e[2]
+pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
+  
+img = ax3.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
+             c=pest_obs_file_head.Measured,
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
+
+# Format plot           
+axes = plt.gca()
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+axes.axes.get_xaxis().set_visible(False)
+
+plt.yticks(fontsize=12, rotation=45)
+axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(e) Short relative to domain", fontsize=fszalpha)
+
+
+
+# ----------------------------------------------------------
+ax4  = plt.subplot(4,2,7)
+
+# Plot the real fault location
+for i in range(len(re_fa_rows_list_e4)):
+        ax4.plot(re_fa_cols_list_e4_m[i], re_fa_rows_list_e4_m[i], lw = lw_fig9a, 
+                 color = real_plot_c, ls='-') #real_plot_ls
+# Add the observation data
+pest_obs_file = all_obs_pest_obs_file_e[3]
+pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
+  
+img = ax4.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
+             c=pest_obs_file_head.Measured,
+             s=sz, cmap="coolwarm_r", vmin=200, vmax=300)   
+
+# Format plot           
+axes = plt.gca()
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+
+#plt.xticks(fontsize=12, rotation=45)
+plt.xticks(fontsize=12)
+
+plt.xticks([5000, 10000, 15000, 20000]) # , ["", "2 km"]
+axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.yticks(fontsize=12, rotation=45)
+axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(g) Multiple barriers", fontsize=fszalpha)
+
+#------------------------------------------------------------------------------
+# e
+ax5  = plt.subplot(4,2,2)
+
+ix = 0
+
+key_df_single = key_dfs_e[ix]
+phantom_df_single = phantom_dfs_e[ix]
+
+min_value = -6.0
+max_value =  0.0
+range_values = max_value*100-min_value*100 #max_value-min_value 
+ranges = np.linspace(int(min_value*100), int(max_value*100), int(range_values)+1)
+
+'''
+# Add the observation data
+pest_obs_file = all_obs_pest_obs_file_e[ix]
+pest_obs_file_head = pest_obs_file[pest_obs_file["Group"]=="head"]
+
+img = ax5.scatter(pest_obs_file_head.Col100, pest_obs_file_head.Row100,
+             c=pest_obs_file_head.Measured,
+             s=sz, cmap="coolwarm_r")
+'''
+# Plot the phantom fault results
+K_leg_value = []
+for i in ranges:
+    K_leg_value.append("$\geqslant$ %d" %i)
+                          
+color = cm.terrain(np.linspace(0,1,len(ranges)))
+
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
+        
+    ax5.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)
+
+       
+# I am going to re-plot the key faults so they are over the top of the grey ones
+for i in range(len(ph_fa_rows_list)):  
+    if (phantom_df_single.index[i] in key_df_single.index) == True:
+        idx_nm = phantom_df_single.index[i]
+        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
+        K_col = color[np.where(ranges==K_val)[0][0]]
+        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
+        
+        ax5.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = 4, color = K_col)
+                        
+    else:
+        pass
+
+axes = plt.gca()   
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+ 
+axes.axes.get_xaxis().set_visible(False)
+axes.axes.get_yaxis().set_visible(False)
+
+plt.text(x_alp, y_alp, "(b)", fontsize=fszalpha)
+
+#------------------------------------------------------------------------------
+ax6  = plt.subplot(4,2,4)
+ix = 1
+
+key_df_single = key_dfs_e[ix]
+phantom_df_single = phantom_dfs_e[ix]
+
+
+  
+# Plot all phantom structures
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
+    
+    ax6.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+         lw = lw_ps, color = K_col)   
+    
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
+for i in range(len(ph_fa_rows_list)):  
+    if (phantom_df_single.index[i] in key_df_single.index) == True:
+        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
+        K_nms.append(phantom_df_single.index[i])
+        K_vals.append((np.log10(phantom_df_single["K_posterior"][i])))
+        K_col = color[np.where(ranges==K_val)[0][0]]
+        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
+        
+        ax6.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = 4, color = K_col)
+                        
+    else:
+        pass
+
+axes = plt.gca()    
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]]) 
+
+axes.axes.get_xaxis().set_visible(False)
+axes.axes.get_yaxis().set_visible(False)
+
+plt.text(x_alp, y_alp, "(d)", fontsize=fszalpha)
+
+#------------------------------------------------------------------------------
+ax7  = plt.subplot(4,2,6)
+
+ix = 2
+
+key_df_single = key_dfs_e[ix]
+phantom_df_single = phantom_dfs_e[ix]
+
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
+        
+    ax7.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)  
+        
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
+for i in range(len(ph_fa_rows_list)):  
+    if (phantom_df_single.index[i] in key_df_single.index) == True:
+        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
+        K_vals.append((np.log10(phantom_df_single["K_posterior"][i])))
+        K_nms.append(phantom_df_single.index[i])
+        K_col = color[np.where(ranges==K_val)[0][0]]
+        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
+        
+        ax7.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = 4, color = K_col)
+                        
+    else:
+        pass
+
+axes = plt.gca()    
+
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]])
+
+axes.axes.get_xaxis().set_visible(False)
+axes.axes.get_yaxis().set_visible(False)
+
+plt.text(x_alp, y_alp, "(f)", fontsize=fszalpha)
+
+
+#------------------------------------------------------------------------------
+ax8  = plt.subplot(4,2,8)
+
+ix = 3
+
+key_df_single = key_dfs_e[ix]
+phantom_df_single = phantom_dfs_e[ix]
+
+for i in range(len(ph_fa_rows_list)):
+    
+    K_col = "0.95"
+        
+    ax8.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = lw_ps, color = K_col)  
+        
+# I am going to re-plot the key faults so they are over the top of the grey ones
+K_vals = []
+K_nms = []
+for i in range(len(ph_fa_rows_list)):  
+    if (phantom_df_single.index[i] in key_df_single.index) == True:
+        K_val = int(np.log10(phantom_df_single["K_posterior"][i])*100)
+        K_vals.append(np.log10(phantom_df_single["K_posterior"][i]))
+        K_nms.append(phantom_df_single.index[i])
+        K_col = color[np.where(ranges==K_val)[0][0]]
+        K_leg = K_leg_value[np.where(ranges==K_val)[0][0]]
+        
+        ax8.plot(all_cols_dict[phantom_df_single.index[i]], all_rows_dict[phantom_df_single.index[i]],  
+             lw = 4, color = K_col)
+                        
+    else:
+        pass
+
+axes = plt.gca()  
+
+axes.set_xlim([0, param_dict["Lx"]])                
+axes.set_ylim([0, param_dict["Ly"]])
+  
+axes.axes.get_yaxis().set_visible(False)
+
+plt.xticks(fontsize=12)
+plt.xticks([5000, 10000, 15000,20000]) # , ["", "2 km"]
+
+axes.xaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+
+plt.text(x_alp, y_alp, "(h)", fontsize=fszalpha)
+
+
+
+# Whole figure formatting -----------------------------------------------------
+plt.subplots_adjust(bottom=0.16)
+plt.subplots_adjust(top = 0.93, hspace=0.15, wspace=0.1) # , bottom=0.01, 
+
+# Adding common x and y labels
+fig.text(0.5, 0.09, '$x$ [m]', ha='center', va='center')
+fig.text(0.015, 0.52, '$y$ [m]', ha='center', va='center', rotation='vertical')
+
+# COLOURBAR FOR OBS WELLS
+cbaxes1 = fig.add_axes([0.1, 0.055, 0.24, 0.02]) 
+cb1 = plt.colorbar(img, cax = cbaxes1, orientation="horizontal")  
+cb1.set_label('Hydraulic head [m]', labelpad=-25, x=1.44, y=0.6, fontsize=12)
+cb1.ax.tick_params(labelsize=12)
+
+# COLOURBAR FOR THE HK
+cbaxes2 = fig.add_axes([0.56, 0.055, 0.24, 0.02]) 
+
+cmap = mpl.cm.ScalarMappable(
+      norm = mcolors.Normalize(min_value, max_value), 
+      cmap = plt.get_cmap('terrain'))
+
+cmap.set_array([])
+cb2 = fig.colorbar(cmap,  cax=cbaxes2, orientation="horizontal")
+
+tick_locator = ticker.MaxNLocator(nbins = 3)
+cb2.locator = tick_locator
+cb2.update_ticks()
+
+cb2.set_label("log $K_b$ [m/d]", labelpad=-28, x=1.3, y=0.6, fontsize=12)
+#cb2.set_label("log $K_b$ [m/d]", fontsize=12)
+
+plt.savefig(os.path.join(pprfigureDirectory, "Single_obs_k_e"), dpi=dpi_value)  
 
 
 #_ _ _ _ _ _ _ _ _ 
